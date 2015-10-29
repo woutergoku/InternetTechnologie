@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,11 +60,7 @@ public class Apl {
 			 this.socket = socket;
 		 }
 
-		 public void run() {
-			 // 1. Wacht op berichten van de client.
-			 // 2. Stuur berichten van de clients door naar de andere
-			 // clients. (Broadcast)
-			 
+		 public void run() {			 
 			 try {
 				InputStream inputStream = new BufferedInputStream(socket.getInputStream());
 				outputStream = new BufferedOutputStream(socket.getOutputStream());
@@ -78,7 +75,7 @@ public class Apl {
 					System.out.println("---");
 					System.out.println(data);
 					
-					if(data.startsWith("<stream")) {
+					if(data.startsWith("<?xml version='1.0'?><stream")) {
 						print.println("<?xml version='1.0'?>");
 						print.println("<stream:stream xmlns:stream='http://etherx.jabber.org/streams' version='1.0' id='psiTest' xmlns='jabber:client' from='localhost' xml:lang='en' xmlns:xml='http://www.w3.org/XML/1998/namespace'>");
 						print.println("<stream:features	/>");
@@ -160,23 +157,19 @@ public class Apl {
 			 
 			 return "";
 		 }
-		 
-		 public String getXMLfromReader(BufferedReader reader) {
-			 //StringBuilder builder = new StringBuilder();
-			 String builder = "";
-			 int character = 0;
-			 try {
-				//int character = reader.read();
-				while((character = reader.read()) != -1) {
-					builder += (char)character;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			 return builder.toString();
-		 }
 	}
+	
+	public String getXMLfromReader(BufferedReader reader) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		int character = 0;
+		
+		while((character = reader.read()) != 10) {
+			builder.append((char)character);
+		}
+		
+		System.out.println("Builder: " + builder.toString());
+		return builder.toString();
+	 }
 }
 
 
